@@ -1,6 +1,7 @@
 
 package nl.tue.s2id90.group05;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 import nl.tue.s2id90.draughts.DraughtsState;
@@ -62,6 +63,7 @@ public class AIPlayerNoHeuristic extends DraughtsPlayer {
         
         DraughtsState state = node.getState();
         List<Move> moves = state.getMoves();
+        Collections.shuffle(moves); //ensure random behavior if the value of moves is the same
         
         //if leaf node
         if (moves.isEmpty() || depth == depthLimit) {
