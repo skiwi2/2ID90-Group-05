@@ -52,86 +52,64 @@ public class AIPlayerPositionHeuristic extends DraughtsPlayer {
         int returnValue;
         
         int[] pieces = draughtsState.getPieces();
-        int whitePieces = (int)Arrays.stream(pieces, 1, pieces.length)
-            .filter(Draughts::isWhite)
-            .count();
-        int blackPieces = (int)Arrays.stream(pieces, 1, pieces.length)
-            .filter(Draughts::isBlack)
-            .count();
         
         if (isWhitePlayerAtFirstMoveRequest) {
-            if (whitePieces == 0) {
-                returnValue = -100000;
-            }
-            else if (blackPieces == 0) {
-                returnValue = 100000;
-            }
-            else {
-                double value = 0d;
-                for (int i = 1; i < pieces.length; i++) {
-                    int row = (i - 1) / 5;
-                    double rowScaled = row * 1d / 9d;
-                    if (Draughts.isWhite(pieces[i])) {
-                        if (Draughts.isKing(pieces[i])) {
-                            value += 100d;
-                        }
-                        else {
-                            double modifier = 1d + rowScaled;   //closer to 1 (bottom) is better
-//                            double modifier = 1d + (1d - rowScaled);   //closer to 0 (top) is better
-                            value += (1d * modifier);
-                        }
+            double value = 0d;
+            for (int i = 1; i < pieces.length; i++) {
+                int row = (i - 1) / 5;
+                double rowScaled = row * 1d / 9d;
+                if (Draughts.isWhite(pieces[i])) {
+                    if (Draughts.isKing(pieces[i])) {
+                        value += 100d;
                     }
-                    else if (Draughts.isBlack(pieces[i])) {
-                        if (Draughts.isKing(pieces[i])) {
-                            value -= 100d;
-                        }
-                        else {
-                            double modifier = 1d + rowScaled;   //closer to 1 (bottom) is bigger threat
-                            value -= (1d * modifier);
-                        }
+                    else {
+                        double modifier = 1d + rowScaled;   //closer to 1 (bottom) is better
+//                            double modifier = 1d + (1d - rowScaled);   //closer to 0 (top) is better
+                        value += (1d * modifier);
                     }
                 }
-                returnValue = (int)(value * 10d);
+                else if (Draughts.isBlack(pieces[i])) {
+                    if (Draughts.isKing(pieces[i])) {
+                        value -= 100d;
+                    }
+                    else {
+                        double modifier = 1d + rowScaled;   //closer to 1 (bottom) is bigger threat
+                        value -= (1d * modifier);
+                    }
+                }
             }
+            returnValue = (int)(value * 10d);
         }
         else {
-            if (blackPieces == 0) {
-                returnValue = -100000;
-            }
-            else if (whitePieces == 0) {
-                returnValue = 100000;
-            }
-            else {
-                double value = 0d;
-                for (int i = 1; i < pieces.length; i++) {
-                    int row = (i - 1) / 5;
-                    double rowScaled = row * 1d / 9d;
-                    if (Draughts.isBlack(pieces[i])) {
-                        if (Draughts.isKing(pieces[i])) {
-                            value += 100d;
-                        }
-                        else {
+            double value = 0d;
+            for (int i = 1; i < pieces.length; i++) {
+                int row = (i - 1) / 5;
+                double rowScaled = row * 1d / 9d;
+                if (Draughts.isBlack(pieces[i])) {
+                    if (Draughts.isKing(pieces[i])) {
+                        value += 100d;
+                    }
+                    else {
 //                            //TODO fix this fix as this fix should not be needed
 //                            double modifier = 1d + (1d - rowScaled);
 //    //                        double modifier = 1d + rowScaled;   //closer to 1 (bottom) is better
-                            double modifier = 1d + (1d - rowScaled);   //with fix ^, closer to 0 (top) is better
-                            value += (1d * modifier);
-                        }
-                    }
-                    else if (Draughts.isWhite(pieces[i])) {
-                        if (Draughts.isKing(pieces[i])) {
-                            value -= 100d;
-                        }
-                        else {
-                            //TODO fix this fix as this fix should not be needed
-                            double modifier = 1d + (1d - rowScaled);
-    //                        double modifier = 1d + (1d - rowScaled);   //closer to 0 (top) is bigger threat
-                            value -= (1d * modifier);
-                        }
+                        double modifier = 1d + (1d - rowScaled);   //with fix ^, closer to 0 (top) is better
+                        value += (1d * modifier);
                     }
                 }
-                returnValue = (int)(value * 10d); 
+                else if (Draughts.isWhite(pieces[i])) {
+                    if (Draughts.isKing(pieces[i])) {
+                        value -= 100d;
+                    }
+                    else {
+                        //TODO fix this fix as this fix should not be needed
+                        double modifier = 1d + (1d - rowScaled);
+//                        double modifier = 1d + (1d - rowScaled);   //closer to 0 (top) is bigger threat
+                        value -= (1d * modifier);
+                    }
+                }
             }
+            returnValue = (int)(value * 10d);
         }
         if (returnValue > 0) {
             return returnValue - depth;

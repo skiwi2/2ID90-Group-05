@@ -61,30 +61,13 @@ public class AIPlayerAdvancedHeuristic extends DraughtsPlayer {
             .filter(piece -> piece == DraughtsState.BLACKKING)
             .count();
         
-        int totalWhitePieces = whitePieces + whiteKings;
-        int totalBlackPieces = blackPieces + blackKings;
-        
         if (isWhitePlayerAtFirstMoveRequest) {
             //am white player
-            if (totalWhitePieces == 0) {
-                returnValue = -100000;
-            }
-            else if (totalBlackPieces == 0) {
-                returnValue = 100000;
-            } else {
-                returnValue = (whiteKings * 1000) + (whitePieces * 10) - (blackKings * 1000) - (blackPieces * 10);
-            }
+            returnValue = (whiteKings * 1000) + (whitePieces * 10) - (blackKings * 1000) - (blackPieces * 10);
         }
         else {
             //am black player
-            if (totalBlackPieces == 0) {
-                returnValue = -100000;
-            }
-            else if (totalWhitePieces == 0) {
-                returnValue = 100000;
-            } else {
-                returnValue = (blackKings * 1000) + (blackPieces * 10) - (whiteKings * 1000) - (whitePieces * 10);
-            }
+            returnValue = (blackKings * 1000) + (blackPieces * 10) - (whiteKings * 1000) - (whitePieces * 10);
         }
         if (returnValue > 0) {
             return returnValue - depth;
@@ -96,6 +79,8 @@ public class AIPlayerAdvancedHeuristic extends DraughtsPlayer {
     }
     
     private boolean isWhitePlayerAtFirstMoveRequest(final DraughtsState draughtsState) {
+        //TODO use draughtsState.isWhiteToMove()?
+        
         //I am the white player if the board has not been changed the first time I am requested to make a move
         //There is no DraughtState.equals method, so we need to manually check if states are equal
         
