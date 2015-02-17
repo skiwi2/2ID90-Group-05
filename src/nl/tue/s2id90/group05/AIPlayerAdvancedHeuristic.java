@@ -35,12 +35,17 @@ public class AIPlayerAdvancedHeuristic extends DraughtsPlayer {
     }
     
     private int advancedHeuristic(final DraughtsState draughtsState, final int depth) {
-        //gives depth - 10000 to a loss
-        //gives -100 per opponent king
-        //gives -1 per opponent piece
-        //gives 1 per own piece
-        //gives 100 per own piece
-        //gives 10000 - depth to a win
+        //gives -100000 to a loss
+        //gives -1000 per opponent king
+        //gives -10 per opponent piece
+        //gives 10 per own piece
+        //gives 1000 per own piece
+        //gives 100000 to a win
+        
+        //if returnValue > 0: return returnValue - depth
+        //if returnValue < 0: return depth + returnValue
+        
+        int returnValue;
         
         int[] pieces = draughtsState.getPieces();
         int whitePieces = (int)Arrays.stream(pieces, 1, pieces.length)
@@ -62,24 +67,31 @@ public class AIPlayerAdvancedHeuristic extends DraughtsPlayer {
         if (isWhitePlayerAtFirstMoveRequest) {
             //am white player
             if (totalWhitePieces == 0) {
-                return depth - 10000;
+                returnValue = -100000;
             }
             else if (totalBlackPieces == 0) {
-                return 10000 - depth;
+                returnValue = 100000;
             } else {
-                return (whiteKings * 100) + whitePieces - (blackKings * 100) - blackPieces;
+                returnValue = (whiteKings * 1000) + (whitePieces * 10) - (blackKings * 1000) - (blackPieces * 10);
             }
         }
         else {
             //am black player
             if (totalBlackPieces == 0) {
-                return depth - 10000;
+                returnValue = -100000;
             }
             else if (totalWhitePieces == 0) {
-                return 10000 - depth;
+                returnValue = 100000;
             } else {
-                return (blackKings * 100) + blackPieces - (whiteKings * 100) - whitePieces;
+                returnValue = (blackKings * 1000) + (blackPieces * 10) - (whiteKings * 1000) - (whitePieces * 10);
             }
+        }
+        if (returnValue > 0) {
+            return returnValue - depth;
+        } else if (returnValue < 0) {
+            return depth + returnValue;
+        } else {
+            return 0;
         }
     }
     

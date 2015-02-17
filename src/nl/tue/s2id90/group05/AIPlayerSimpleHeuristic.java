@@ -35,6 +35,7 @@ public class AIPlayerSimpleHeuristic extends DraughtsPlayer {
     }
     
     private int simpleHeuristic(final DraughtsState draughtsState, final int depth) {
+        int returnValue;
         int[] pieces = draughtsState.getPieces();
         int whitePieces = (int)Arrays.stream(pieces, 1, pieces.length)
             .filter(piece -> piece == DraughtsState.WHITEPIECE || piece == DraughtsState.WHITEKING)
@@ -44,10 +45,17 @@ public class AIPlayerSimpleHeuristic extends DraughtsPlayer {
             .count();
         
         if (isWhitePlayerAtFirstMoveRequest) {
-            return whitePieces - blackPieces;
+            returnValue = (whitePieces - blackPieces) * 10;
         }
         else {
-            return blackPieces - whitePieces;
+            returnValue = (blackPieces - whitePieces) * 10;
+        }
+        if (returnValue > 0) {
+            return returnValue - depth;
+        } else if (returnValue < 0) {
+            return depth + returnValue;
+        } else {
+            return 0;
         }
     }
     
