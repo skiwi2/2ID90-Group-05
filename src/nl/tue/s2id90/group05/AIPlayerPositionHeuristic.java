@@ -76,7 +76,8 @@ public class AIPlayerPositionHeuristic extends DraughtsPlayer {
                             value += 100d;
                         }
                         else {
-                            double modifier = 1d + (1d - rowScaled);   //closer to 0 (top) is better
+                            double modifier = 1d + rowScaled;   //closer to 1 (bottom) is better
+//                            double modifier = 1d + (1d - rowScaled);   //closer to 0 (top) is better
                             value += (1d * modifier);
                         }
                     }
@@ -110,9 +111,10 @@ public class AIPlayerPositionHeuristic extends DraughtsPlayer {
                             value += 100d;
                         }
                         else {
-                            //TODO fix this fix as this fix should not be needed
-                            double modifier = 1d + (1d - rowScaled);
-    //                        double modifier = 1d + rowScaled;   //closer to 1 (bottom) is better
+//                            //TODO fix this fix as this fix should not be needed
+//                            double modifier = 1d + (1d - rowScaled);
+//    //                        double modifier = 1d + rowScaled;   //closer to 1 (bottom) is better
+                            double modifier = 1d + (1d - rowScaled);   //with fix ^, closer to 0 (top) is better
                             value += (1d * modifier);
                         }
                     }
@@ -122,7 +124,7 @@ public class AIPlayerPositionHeuristic extends DraughtsPlayer {
                         }
                         else {
                             //TODO fix this fix as this fix should not be needed
-                            double modifier = 1d + rowScaled;
+                            double modifier = 1d + (1d - rowScaled);
     //                        double modifier = 1d + (1d - rowScaled);   //closer to 0 (top) is bigger threat
                             value -= (1d * modifier);
                         }
