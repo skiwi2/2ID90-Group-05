@@ -4,7 +4,6 @@ package nl.tue.s2id90.group05;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.BiFunction;
 import nl.tue.s2id90.draughts.DraughtsState;
 import nl.tue.s2id90.draughts.player.DraughtsPlayer;
 import org10x10.dam.game.Move;
@@ -20,12 +19,10 @@ public class AIPlayerAdvancedHeuristic extends DraughtsPlayer {
      * The state corresponds to the current state of the board.
      * The depth corresponds to the current depth in the alpha beta search.
      */
-    private final BiFunction<DraughtsState, Integer, Integer> heuristicFunction;
+    private final HeuristicFunction heuristicFunction;
     
     private boolean hasToStop = false;
     private Integer bestMoveValue = null;
-    private int moveRequests = 0;
-    private boolean isWhitePlayerAtFirstMoveRequest;
     
     public AIPlayerAdvancedHeuristic() {
         super();
@@ -34,7 +31,7 @@ public class AIPlayerAdvancedHeuristic extends DraughtsPlayer {
         this.heuristicFunction = this::advancedHeuristic;
     }
     
-    private int advancedHeuristic(final DraughtsState draughtsState, final int depth) {
+    private int advancedHeuristic(final DraughtsState draughtsState, final boolean isWhitePlayer, final int depth) {
         //gives -100000 to a loss
         //gives -1000 per opponent king
         //gives -10 per opponent piece
@@ -61,7 +58,7 @@ public class AIPlayerAdvancedHeuristic extends DraughtsPlayer {
             .filter(piece -> piece == DraughtsState.BLACKKING)
             .count();
         
-        if (isWhitePlayerAtFirstMoveRequest) {
+        if (isWhitePlayer) {
             //am white player
             returnValue = (whiteKings * 1000) + (whitePieces * 10) - (blackKings * 1000) - (blackPieces * 10);
         }
@@ -77,43 +74,16 @@ public class AIPlayerAdvancedHeuristic extends DraughtsPlayer {
             return 0;
         }
     }
-    
-    private boolean isWhitePlayerAtFirstMoveRequest(final DraughtsState draughtsState) {
-        //TODO use draughtsState.isWhiteToMove()?
-        
-        //I am the white player if the board has not been changed the first time I am requested to make a move
-        //There is no DraughtState.equals method, so we need to manually check if states are equal
-        
-        DraughtsState beginState = draughtsState.clone();
-        beginState.reset();
-        
-        return draughtStateEquals(draughtsState, beginState);
-    }
-    
-    private boolean draughtStateEquals(final DraughtsState draughtsState1, final DraughtsState draughtsState2) {
-        int[] draughtsState1Pieces = draughtsState1.getPieces();
-        int[] draughtsState2Pieces = draughtsState2.getPieces();
-        for (int i = 1; i < draughtsState1Pieces.length; i++) {
-            if (draughtsState1Pieces[i] != draughtsState2Pieces[i]) {
-                return false;
-            }
-        }
-        return true;
-    }
 
     @Override
     public Move getMove(final DraughtsState draughtsState) {
-        moveRequests++;
-        if (moveRequests == 1) {
-            isWhitePlayerAtFirstMoveRequest = isWhitePlayerAtFirstMoveRequest(draughtsState);
-        }
-        
+        boolean isWhitePlayer = draughtsState.isWhiteToMove();  //calculate before going into the alphaBeta algorithm
         GameNode<DraughtsState> node = new GameNode<>(draughtsState);
 
         Move bestMove = null;
         for (int depthLimit = 1; ; depthLimit++) {
             try {
-                bestMoveValue = alphaBeta(node, depthLimit, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, true);
+                bestMoveValue = alphaBeta(node, isWhitePlayer, depthLimit, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, true);
                 bestMove = node.getBestMove();
             } catch (AIStoppedException ex) {
                 break;
@@ -129,7 +99,7 @@ public class AIPlayerAdvancedHeuristic extends DraughtsPlayer {
         return bestMoveValue;
     }
     
-    private int alphaBeta(final GameNode<DraughtsState> node, final int depthLimit, final int depth, final int alpha, final int beta, final boolean maximizingPlayer)
+    private int alphaBeta(final GameNode<DraughtsState> node, final boolean isWhitePlayer, final int depthLimit, final int depth, final int alpha, final int beta, final boolean maximizingPlayer)
         throws AIStoppedException {
         if (hasToStop) {
             hasToStop = false;
@@ -142,7 +112,7 @@ public class AIPlayerAdvancedHeuristic extends DraughtsPlayer {
         
         //if leaf node
         if (moves.isEmpty() || depth == depthLimit) {
-            return heuristicFunction.apply(state, depth);
+            return heuristicFunction.apply(state, isWhitePlayer, depth);
         }
         
         if (maximizingPlayer) {
@@ -152,7 +122,7 @@ public class AIPlayerAdvancedHeuristic extends DraughtsPlayer {
             //create children states
             for (Move move : moves) {
                 state.doMove(move);
-                int alphaBetaValue = alphaBeta(node, depthLimit, depth + 1, newAlpha, beta, false);
+                int alphaBetaValue = alphaBeta(node, isWhitePlayer, depthLimit, depth + 1, newAlpha, beta, false);
                 if (alphaBetaValue > newAlpha) {
                     newAlpha = alphaBetaValue;
                     bestMove = move;
@@ -173,7 +143,7 @@ public class AIPlayerAdvancedHeuristic extends DraughtsPlayer {
             //create children states
             for (Move move : moves) {
                 state.doMove(move);
-                int alphaBetaValue = alphaBeta(node, depthLimit, depth + 1, alpha, newBeta, true);
+                int alphaBetaValue = alphaBeta(node, isWhitePlayer, depthLimit, depth + 1, alpha, newBeta, true);
                 if (alphaBetaValue < newBeta) {
                     newBeta = alphaBetaValue;
                     bestMove = move;
