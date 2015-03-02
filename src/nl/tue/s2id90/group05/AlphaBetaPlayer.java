@@ -148,11 +148,13 @@ public class AlphaBetaPlayer extends DraughtsPlayer {
     
     private static class Triple {
         private final DraughtsState draughtsState;
+        private final int[] draughtsStatePieces;
         private final boolean isWhitePlayer;
         private final int depth;
         
         private Triple(final DraughtsState draughtsState, final boolean isWhitePlayer, final int depth) {
             this.draughtsState = draughtsState;
+            this.draughtsStatePieces = draughtsState.getPieces();
             this.isWhitePlayer = isWhitePlayer;
             this.depth = depth;
         }
@@ -160,7 +162,7 @@ public class AlphaBetaPlayer extends DraughtsPlayer {
         @Override
         public int hashCode() {
             int hash = 5;
-            hash = 23 * hash + Arrays.hashCode(this.draughtsState.getPieces());
+            hash = 23 * hash + Arrays.hashCode(this.draughtsStatePieces);
             hash = 23 * hash + (this.isWhitePlayer ? 1 : 0);
             hash = 23 * hash + this.depth;
             return hash;
@@ -175,7 +177,7 @@ public class AlphaBetaPlayer extends DraughtsPlayer {
                 return false;
             }
             final Triple other = (Triple) obj;
-            if (!Arrays.equals(this.draughtsState.getPieces(), other.draughtsState.getPieces())) {
+            if (!Arrays.equals(this.draughtsStatePieces, other.draughtsStatePieces)) {
                 return false;
             }
             if (this.isWhitePlayer != other.isWhitePlayer) {
