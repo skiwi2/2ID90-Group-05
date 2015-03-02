@@ -1,6 +1,7 @@
 
 package nl.tue.s2id90.group05;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -49,7 +50,7 @@ public class AlphaBetaPlayer extends DraughtsPlayer {
             }
             System.out.println("Evaluated AlphaBeta with depth limit " + depthLimit);
         }
-
+        
         return bestMove;
     }
 
@@ -84,9 +85,9 @@ public class AlphaBetaPlayer extends DraughtsPlayer {
             Move bestMove = moves.get(0);   //make sure bestMove is set
             int newAlpha = alpha;
             
-            //analyze previously known best move first & make sure it is a legal move
+            //analyze previously known best move first
             Move bestMoveFromTable = bestMoveTable.get(triple);
-            if (bestMoveFromTable != null && moves.contains(bestMoveFromTable)) {
+            if (bestMoveFromTable != null) {
                 moves.add(0, bestMoveFromTable);
             }
             
@@ -112,9 +113,9 @@ public class AlphaBetaPlayer extends DraughtsPlayer {
             Move bestMove = moves.get(0);   //make sure bestMove is set
             int newBeta = beta;
             
-            //analyze previously known best move first & make sure it is a legal move
+            //analyze previously known best move first
             Move bestMoveFromTable = bestMoveTable.get(triple);
-            if (bestMoveFromTable != null && moves.contains(bestMoveFromTable)) {
+            if (bestMoveFromTable != null) {
                 moves.add(0, bestMoveFromTable);
             }
             
@@ -157,7 +158,7 @@ public class AlphaBetaPlayer extends DraughtsPlayer {
         @Override
         public int hashCode() {
             int hash = 5;
-            hash = 23 * hash + Objects.hashCode(this.draughtsState);
+            hash = 23 * hash + Arrays.hashCode(this.draughtsState.getPieces());
             hash = 23 * hash + (this.isWhitePlayer ? 1 : 0);
             hash = 23 * hash + this.depth;
             return hash;
@@ -172,7 +173,7 @@ public class AlphaBetaPlayer extends DraughtsPlayer {
                 return false;
             }
             final Triple other = (Triple) obj;
-            if (!Objects.equals(this.draughtsState, other.draughtsState)) {
+            if (!Arrays.equals(this.draughtsState.getPieces(), other.draughtsState.getPieces())) {
                 return false;
             }
             if (this.isWhitePlayer != other.isWhitePlayer) {
