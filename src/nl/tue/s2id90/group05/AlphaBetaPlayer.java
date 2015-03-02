@@ -65,7 +65,7 @@ public class AlphaBetaPlayer extends DraughtsPlayer {
         Collections.shuffle(moves); //ensure random behavior if the value of moves is the same
         
         //if leaf node
-        if (moves.isEmpty() || depth == depthLimit) {
+        if (state.isEndState() || depth == depthLimit) {
             return heuristic.calculateValue(state, isWhitePlayer, depth);
         }
         
