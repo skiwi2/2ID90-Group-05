@@ -7,10 +7,6 @@ package nl.tue.s2id90.group05;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 import nl.tue.s2id90.draughts.DraughtsPlayerProvider;
 import nl.tue.s2id90.draughts.DraughtsPlugin;
-import nl.tue.s2id90.group05.players.AdvancedAIPlayer;
-import nl.tue.s2id90.group05.players.DumbAIPlayer;
-import nl.tue.s2id90.group05.players.PositionAIPlayer;
-import nl.tue.s2id90.group05.players.SimpleAIPlayer;
 import nl.tue.s2id90.group05.players.SmartAIPlayer;
 
 
@@ -26,19 +22,6 @@ public class MyDraughtsPlugin extends DraughtsPlayerProvider implements Draughts
         // During the final competition you should make only your 
         // best player available. For testing it might be handy
         // to make more than one player available.
-        super(
-            new UninformedPlayer(), 
-            new OptimisticPlayer(), 
-            new StupidPlayer(), 
-            new DumbAIPlayer(), 
-            new SimpleAIPlayer(), 
-            new SimpleAIPlayer(), 
-            new AdvancedAIPlayer(), 
-            new AdvancedAIPlayer(), 
-            new PositionAIPlayer(), 
-            new PositionAIPlayer(),
-            new SmartAIPlayer(),
-            new SmartAIPlayer()
-        );
+        super(new SmartAIPlayer());
     }
 }
