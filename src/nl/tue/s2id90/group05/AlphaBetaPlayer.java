@@ -49,7 +49,7 @@ public class AlphaBetaPlayer extends DraughtsPlayer {
             } catch (AIStoppedException ex) {
                 break;
             }
-            System.out.println("Evaluated AlphaBeta with depth limit " + depthLimit);
+//            System.out.println("Evaluated AlphaBeta with depth limit " + depthLimit);
         }
         
         return bestMove;
