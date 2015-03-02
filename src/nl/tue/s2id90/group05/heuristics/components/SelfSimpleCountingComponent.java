@@ -12,7 +12,6 @@ import nl.tue.s2id90.group05.HeuristicComponent;
 public class SelfSimpleCountingComponent implements HeuristicComponent {
     @Override
     public int calculateComponentValue(final DraughtsState draughtsState, final boolean isWhitePlayer, final int depth, final int currentHeuristicValue) {
-        //gives -10 per opponent piece
         //gives 10 per own piece
         
         int[] pieces = draughtsState.getPieces();

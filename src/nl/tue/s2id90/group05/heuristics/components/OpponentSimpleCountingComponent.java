@@ -13,7 +13,6 @@ public class OpponentSimpleCountingComponent implements HeuristicComponent {
     @Override
     public int calculateComponentValue(final DraughtsState draughtsState, final boolean isWhitePlayer, final int depth, final int currentHeuristicValue) {
         //gives -10 per opponent piece
-        //gives 10 per own piece
         
         int[] pieces = draughtsState.getPieces();
         int whitePieces = (int)Arrays.stream(pieces, 1, pieces.length)
@@ -24,10 +23,10 @@ public class OpponentSimpleCountingComponent implements HeuristicComponent {
             .count();
         
         if (isWhitePlayer) {
-            return (-blackPieces * 10);
+            return -(blackPieces * 10);
         }
         else {
-            return (-whitePieces * 10);
+            return -(whitePieces * 10);
         }
     }
 }

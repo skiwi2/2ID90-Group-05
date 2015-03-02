@@ -12,8 +12,6 @@ import nl.tue.s2id90.group05.HeuristicComponent;
 public class SelfKingCountingComponent implements HeuristicComponent {
     @Override
     public int calculateComponentValue(final DraughtsState draughtsState, final boolean isWhitePlayer, final int depth, final int currentHeuristicValue) {
-        //gives -30 per opponent king
-        //gives -10 per opponent piece
         //gives 10 per own piece
         //gives 30 per own piece
         
@@ -32,10 +30,10 @@ public class SelfKingCountingComponent implements HeuristicComponent {
             .count();
         
         if (isWhitePlayer) {
-            return (whiteKings * 30) + (whitePieces * 10);
+            return ((whiteKings * 30) + (whitePieces * 10));
         }
         else {
-            return (blackKings * 30) + (blackPieces * 10);
+            return ((blackKings * 30) + (blackPieces * 10));
         }
     }
 }

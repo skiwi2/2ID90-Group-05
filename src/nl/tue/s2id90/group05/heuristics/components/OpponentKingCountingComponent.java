@@ -14,8 +14,6 @@ public class OpponentKingCountingComponent implements HeuristicComponent {
     public int calculateComponentValue(final DraughtsState draughtsState, final boolean isWhitePlayer, final int depth, final int currentHeuristicValue) {
         //gives -30 per opponent king
         //gives -10 per opponent piece
-        //gives 10 per own piece
-        //gives 30 per own piece
         
         int[] pieces = draughtsState.getPieces();
         int whitePieces = (int)Arrays.stream(pieces, 1, pieces.length)
@@ -32,10 +30,10 @@ public class OpponentKingCountingComponent implements HeuristicComponent {
             .count();
         
         if (isWhitePlayer) {
-            return (-(blackKings * 30) - (blackPieces * 10));
+            return -((blackKings * 30) + (blackPieces * 10));
         }
         else {
-            return (-(whiteKings * 30) - (whitePieces * 10));
+            return -((whiteKings * 30) + (whitePieces * 10));
         }
     }
 }
