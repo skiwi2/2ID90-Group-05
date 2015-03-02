@@ -33,7 +33,7 @@ public class AlphaBetaPlayer extends DraughtsPlayer {
 
     @Override
     public Move getMove(final DraughtsState draughtsState) {
-        Map<Triple, Integer> heuristicMap = new HashMap<>();
+        Map<Triple, Integer> transpositionTable = new HashMap<>();
         
         boolean isWhitePlayer = draughtsState.isWhiteToMove();  //calculate before going into the alphaBeta algorithm
         GameNode<DraughtsState> node = new GameNode<>(draughtsState);
@@ -41,7 +41,7 @@ public class AlphaBetaPlayer extends DraughtsPlayer {
         Move bestMove = null;
         for (int depthLimit = 1; ; depthLimit++) {
             try {
-                bestMoveValue = alphaBeta(heuristicMap, node, isWhitePlayer, depthLimit, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, true);
+                bestMoveValue = alphaBeta(transpositionTable, node, isWhitePlayer, depthLimit, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, true);
                 bestMove = node.getBestMove();
             } catch (AIStoppedException ex) {
                 break;
@@ -57,7 +57,7 @@ public class AlphaBetaPlayer extends DraughtsPlayer {
         return bestMoveValue;
     }
     
-    private int alphaBeta(final Map<Triple, Integer> heuristicMap, final GameNode<DraughtsState> node, final boolean isWhitePlayer, final int depthLimit, final int depth, final int alpha, final int beta, final boolean maximizingPlayer)
+    private int alphaBeta(final Map<Triple, Integer> transpositionTable, final GameNode<DraughtsState> node, final boolean isWhitePlayer, final int depthLimit, final int depth, final int alpha, final int beta, final boolean maximizingPlayer)
         throws AIStoppedException {
         if (hasToStop) {
             hasToStop = false;
@@ -71,11 +71,11 @@ public class AlphaBetaPlayer extends DraughtsPlayer {
         //if leaf node
         if (state.isEndState() || depth == depthLimit) {
             Triple triple = new Triple(state, isWhitePlayer, depth);
-            if (heuristicMap.containsKey(triple)) {
-                return heuristicMap.get(triple);
+            if (transpositionTable.containsKey(triple)) {
+                return transpositionTable.get(triple);
             }
             int heuristicValue = heuristic.calculateValue(state, isWhitePlayer, depth);
-            heuristicMap.put(triple, heuristicValue);
+            transpositionTable.put(triple, heuristicValue);
             return heuristicValue;
         }
         
@@ -86,7 +86,7 @@ public class AlphaBetaPlayer extends DraughtsPlayer {
             //create children states
             for (Move move : moves) {
                 state.doMove(move);
-                int alphaBetaValue = alphaBeta(heuristicMap, node, isWhitePlayer, depthLimit, depth + 1, newAlpha, beta, false);
+                int alphaBetaValue = alphaBeta(transpositionTable, node, isWhitePlayer, depthLimit, depth + 1, newAlpha, beta, false);
                 if (alphaBetaValue > newAlpha) {
                     newAlpha = alphaBetaValue;
                     bestMove = move;
@@ -107,7 +107,7 @@ public class AlphaBetaPlayer extends DraughtsPlayer {
             //create children states
             for (Move move : moves) {
                 state.doMove(move);
-                int alphaBetaValue = alphaBeta(heuristicMap, node, isWhitePlayer, depthLimit, depth + 1, alpha, newBeta, true);
+                int alphaBetaValue = alphaBeta(transpositionTable, node, isWhitePlayer, depthLimit, depth + 1, alpha, newBeta, true);
                 if (alphaBetaValue < newBeta) {
                     newBeta = alphaBetaValue;
                     bestMove = move;
