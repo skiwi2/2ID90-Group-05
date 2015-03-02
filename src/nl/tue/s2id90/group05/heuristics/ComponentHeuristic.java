@@ -23,7 +23,7 @@ public class ComponentHeuristic implements Heuristic {
     final public int calculateValue(final DraughtsState draughtsState, final boolean isWhitePlayer, final int depth) {
         int value = 0;
         for (HeuristicComponent component : components) {
-            value = component.calculateComponentValue(draughtsState, isWhitePlayer, depth, value);
+            value += component.calculateComponentValue(draughtsState, isWhitePlayer, depth, value);
         }
         return value;
     }
