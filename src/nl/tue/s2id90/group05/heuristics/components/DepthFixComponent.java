@@ -12,9 +12,9 @@ public class DepthFixComponent implements HeuristicComponent {
     @Override
     public int calculateComponentValue(final DraughtsState draughtsState, final boolean isWhitePlayer, final int depth, final int currentHeuristicValue) {
         if (currentHeuristicValue > 0) {
-            return (currentHeuristicValue - depth);
+            return -depth;
         } else if (currentHeuristicValue < 0) {
-            return (depth - currentHeuristicValue);
+            return depth;
         }
         else {
             return 0;
