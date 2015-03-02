@@ -13,7 +13,7 @@ public class SelfKingCountingComponent implements HeuristicComponent {
     @Override
     public int calculateComponentValue(final DraughtsState draughtsState, final boolean isWhitePlayer, final int depth, final int currentHeuristicValue) {
         //gives 10 per own piece
-        //gives 30 per own piece
+        //gives 30 per own king
         
         int[] pieces = draughtsState.getPieces();
         int whitePieces = (int)Arrays.stream(pieces, 1, pieces.length)

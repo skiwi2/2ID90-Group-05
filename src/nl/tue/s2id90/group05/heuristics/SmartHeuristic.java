@@ -2,9 +2,11 @@
 package nl.tue.s2id90.group05.heuristics;
 
 import nl.tue.s2id90.group05.heuristics.components.DepthFixComponent;
+import nl.tue.s2id90.group05.heuristics.components.OpponentDefensiveKingCountingComponent;
 import nl.tue.s2id90.group05.heuristics.components.OpponentDiamondComponent;
 import nl.tue.s2id90.group05.heuristics.components.OpponentEdgeComponent;
 import nl.tue.s2id90.group05.heuristics.components.OpponentKingCountingComponent;
+import nl.tue.s2id90.group05.heuristics.components.SelfDefensiveKingCountingComponent;
 import nl.tue.s2id90.group05.heuristics.components.SelfDiamondComponent;
 import nl.tue.s2id90.group05.heuristics.components.SelfEdgeComponent;
 import nl.tue.s2id90.group05.heuristics.components.SelfKingCountingComponent;
@@ -23,6 +25,8 @@ public class SmartHeuristic extends ComponentHeuristic {
             new OpponentEdgeComponent(),
             new SelfDiamondComponent(),
             new OpponentDiamondComponent(),
+            new SelfDefensiveKingCountingComponent(),
+            new OpponentDefensiveKingCountingComponent(),
             new DepthFixComponent()
         );
     }
