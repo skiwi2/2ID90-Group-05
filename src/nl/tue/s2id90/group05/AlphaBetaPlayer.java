@@ -3,6 +3,7 @@ package nl.tue.s2id90.group05;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,6 +70,7 @@ public class AlphaBetaPlayer extends DraughtsPlayer {
         DraughtsState state = node.getState();
         List<Move> moves = state.getMoves();
         Collections.shuffle(moves); //ensure random behavior if the value of moves is the same
+        moves.sort(Comparator.comparing(Move::getCaptureCount).reversed()); //sort for better pruning performance
         
         //if leaf node
         Triple triple = new Triple(state, isWhitePlayer, depth);
