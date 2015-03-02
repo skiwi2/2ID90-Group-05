@@ -34,6 +34,7 @@ public class AlphaBetaPlayer extends DraughtsPlayer {
     @Override
     public Move getMove(final DraughtsState draughtsState) {
         Map<Triple, Integer> transpositionTable = new HashMap<>();
+        Map<Triple, Move> bestMoveTable = new HashMap<>();
         
         boolean isWhitePlayer = draughtsState.isWhiteToMove();  //calculate before going into the alphaBeta algorithm
         GameNode<DraughtsState> node = new GameNode<>(draughtsState);
@@ -41,7 +42,7 @@ public class AlphaBetaPlayer extends DraughtsPlayer {
         Move bestMove = null;
         for (int depthLimit = 1; ; depthLimit++) {
             try {
-                bestMoveValue = alphaBeta(transpositionTable, node, isWhitePlayer, depthLimit, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, true);
+                bestMoveValue = alphaBeta(transpositionTable, bestMoveTable, node, isWhitePlayer, depthLimit, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, true);
                 bestMove = node.getBestMove();
             } catch (AIStoppedException ex) {
                 break;
@@ -57,7 +58,7 @@ public class AlphaBetaPlayer extends DraughtsPlayer {
         return bestMoveValue;
     }
     
-    private int alphaBeta(final Map<Triple, Integer> transpositionTable, final GameNode<DraughtsState> node, final boolean isWhitePlayer, final int depthLimit, final int depth, final int alpha, final int beta, final boolean maximizingPlayer)
+    private int alphaBeta(final Map<Triple, Integer> transpositionTable, final Map<Triple, Move> bestMoveTable, final GameNode<DraughtsState> node, final boolean isWhitePlayer, final int depthLimit, final int depth, final int alpha, final int beta, final boolean maximizingPlayer)
         throws AIStoppedException {
         if (hasToStop) {
             hasToStop = false;
@@ -69,8 +70,8 @@ public class AlphaBetaPlayer extends DraughtsPlayer {
         Collections.shuffle(moves); //ensure random behavior if the value of moves is the same
         
         //if leaf node
+        Triple triple = new Triple(state, isWhitePlayer, depth);
         if (state.isEndState() || depth == depthLimit) {
-            Triple triple = new Triple(state, isWhitePlayer, depth);
             if (transpositionTable.containsKey(triple)) {
                 return transpositionTable.get(triple);
             }
@@ -83,10 +84,16 @@ public class AlphaBetaPlayer extends DraughtsPlayer {
             Move bestMove = moves.get(0);   //make sure bestMove is set
             int newAlpha = alpha;
             
+            //analyze previously known best move first & make sure it is a legal move
+            Move bestMoveFromTable = bestMoveTable.get(triple);
+            if (bestMoveFromTable != null && moves.contains(bestMoveFromTable)) {
+                moves.add(0, bestMoveFromTable);
+            }
+            
             //create children states
             for (Move move : moves) {
                 state.doMove(move);
-                int alphaBetaValue = alphaBeta(transpositionTable, node, isWhitePlayer, depthLimit, depth + 1, newAlpha, beta, false);
+                int alphaBetaValue = alphaBeta(transpositionTable, bestMoveTable, node, isWhitePlayer, depthLimit, depth + 1, newAlpha, beta, false);
                 if (alphaBetaValue > newAlpha) {
                     newAlpha = alphaBetaValue;
                     bestMove = move;
@@ -98,16 +105,23 @@ public class AlphaBetaPlayer extends DraughtsPlayer {
             }
             
             node.setBestMove(bestMove);
+            bestMoveTable.put(triple, bestMove);
             return newAlpha;
         }
         else {
             Move bestMove = moves.get(0);   //make sure bestMove is set
             int newBeta = beta;
             
+            //analyze previously known best move first & make sure it is a legal move
+            Move bestMoveFromTable = bestMoveTable.get(triple);
+            if (bestMoveFromTable != null && moves.contains(bestMoveFromTable)) {
+                moves.add(0, bestMoveFromTable);
+            }
+            
             //create children states
             for (Move move : moves) {
                 state.doMove(move);
-                int alphaBetaValue = alphaBeta(transpositionTable, node, isWhitePlayer, depthLimit, depth + 1, alpha, newBeta, true);
+                int alphaBetaValue = alphaBeta(transpositionTable, bestMoveTable, node, isWhitePlayer, depthLimit, depth + 1, alpha, newBeta, true);
                 if (alphaBetaValue < newBeta) {
                     newBeta = alphaBetaValue;
                     bestMove = move;
@@ -119,6 +133,7 @@ public class AlphaBetaPlayer extends DraughtsPlayer {
             }
             
             node.setBestMove(bestMove);
+            bestMoveTable.put(triple, bestMove);
             return newBeta;
         }
     }
